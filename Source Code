@@ -653,4 +653,3 @@ elif ch1==5:
     print("\t\t This is the JOB PORTAL of UDAYAN SOFTWARE LTD.")
     print("-"*80)
     print("CONGRATULATIONS! Your job application is submitted successfully. \n Please track your mail for future correspondence.\n Thank you.")
- 
