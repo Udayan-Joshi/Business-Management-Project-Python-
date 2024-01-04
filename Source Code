@@ -1,0 +1,656 @@
+import mysql.connector as t
+db=t.connect(host="localhost", user="root", database="business_management", password="udayan02")
+x=db.cursor()
+def merchant_relogin():
+    mrchnm1=input("Enter your/company's name :")
+    emrchid=input("To perform business actions, please login by entering your ID :")
+    print("-"*70)
+    emrchid2=[emrchid]
+    x.execute("select Merchant_ID from merchants")
+    lists2=x.fetchall()
+    lists3=[list(row) for row in lists2]
+    if emrchid2 in lists3:
+        print("Login Successful. Welcome ",mrchnm1)
+        print("*"*70)
+    else:
+        print("Invalid Login ID. Please retry.")
+        quit()
+        
+''' cust relogin is same as def custshop()'''       
+
+    
+def merchant_authorisation():
+    print("WELCOME TO MERCHANT'S CORNER \n If you are new, press 1 to register. \n For existing merchants/business, to login, press 2")
+    chho7=int(input("Select user type :"))
+    print("-"*50)
+    if chho7==1:
+        rgst2="MERCHANT/BUSINESS REGISTRATION. \n (Please fill form in block letters)"
+        print('\t\t{}'.format(rgst2.title()))
+        mrchnm=input("Enter your/company's name :")
+        mrchph=input("Enter your contact number :")
+        mrchadd=input("Enter your office address :")
+        mrchtype=input("Enter your business type :")
+        first=mrchnm[2:5]
+        second=mrchph[0:10:3]
+        third=mrchtype[0:4]
+        mrchid=first+second+third
+        merchant=mrchnm,mrchph,mrchadd,mrchtype,mrchid
+        merch1=[]
+        merch1.extend(merchant)
+        mquery="insert into merchants values(%s,%s,%s,%s,%s)"
+        x.execute(mquery,merch1)
+        db.commit()
+        print("-----------------------------------------")
+        print("Your system generated merchant/business ID is", mrchid, ". Please keep it for future reference.")
+        print("-----------------------------------------")
+        emrchid=input("To perform business actions, please login by entering your ID :")
+        print("-"*70)
+        emrchid2=[emrchid]
+        x.execute("select Merchant_ID from merchants")
+        lists=x.fetchall()
+        lists1=[list(row) for row in lists]
+        if emrchid2 in lists1:
+            print("Successfully Logged In!")
+            print("*"*70)
+        else:
+            print("Invalid Login ID. Try entering correct ID again or register first, if not yet registered")
+            quit()
+    elif chho7==2:
+        merchant_relogin()
+def custshop():  
+    ecustid=input("To login , please enter your customer ID :")
+    ecustid2=[ecustid]
+    x.execute("select Customer_ID from customers")
+    lists4=x.fetchall()
+    lists5=[list(row) for row in lists4]
+    if ecustid2 in lists5:
+        print("Login successful. Welcome ",ecustid)
+        print("Now, enjoy and continue to view products and shop online")
+        print("______________________________________________________"*3)
+    else:
+        print("Invalid Credentials")
+        print("______________________________________________________"*3)
+        quit()
+def shoppee(lst2):
+    print("Manufacturer \t Model ID \t Price")
+    queryy="select company,model_id,sell_price from inventory where product_category=%s"
+    x.execute(queryy,lst2)
+    for o in x:
+        print(o)
+def shoppee1():
+    lst3=[]
+    queryy1="select sell_price from inventory where model_id=%s"
+    choicee=input("Enter the Model_ID of the product you want to buy :")
+    lst3.append(choicee)
+    x.execute(queryy1,lst3)
+    for y in x:
+        mrp=int(y[0])
+    print("*"*50)
+    print("The price of the entered product is Rs.",mrp)
+    print("Please continue to order the product or request live demo.")
+def shoppee2():
+    lst2=[]
+    print("Press 1 for Refrigerator \n 2 for Television \n 3 for AC \n 4 for Washing machine \n 5 for laptop \n 6 for mobile phones.")
+    chh9=int(input("Select the option of product you want to buy from the above list :"))
+    print("-"*50)
+    if chh9==1:
+        lst2.append("refrigerator")
+        shoppee(lst2)
+    elif chh9==2:
+        lst2.append("television")
+        shoppee(lst2)
+    elif chh9==3:
+        lst2.append("air conditioner")
+        shoppee(lst2)
+    elif chh9==4:
+        lst2.append("washing machine")
+        shoppee(lst2)
+    elif chh9==5:
+        lst2.append("laptop")
+        shoppee(lst2)
+    elif chh9==6:
+        lst2.append("mobile phone")
+        shoppee(lst2)
+    else:
+        print("Wrong choice entered OR product is out of stock.")
+    shoppee1()
+    print("-"*50)
+    print("Select the type of service you want :")
+    chh11=int(input("Press 1 if you wish to VISIT THE STORE FOR LIVE DEMO \n Press 2 for ONLINE ORDER."))
+    print("-"*50)
+    if chh11==1:
+        custnm1=input("Enter name of the purchaser :")
+        date=input("Enter the day, date for visit (in DAY - DD-MM-YYYY) format :")
+        print("Please select option for time slot: press 1 for 10am-2pm \n 2 for 2pm to 6pm \n 3 for 6pm to 10pm")
+        time=int(input("Enter option :"))
+        msg1="APPOINTMENT SLIP"
+        print("-"*50)
+        if time==1:
+            print('\t\t{}'.format(msg1.title()))
+            print("Congratulations Mr/Mrs",custnm1,". Your visit to our showroom is scheduled for ",date," in between 10am to 2pm. \n Address - Joshi Electronics, 12 Lajpat Nagar, New Delhi \n Contact details : +91 7668395022")
+        elif time==2:
+            print('\t\t{}'.format(msg1.title()))
+            print("Congratulations Mr/Mrs",custnm1,". Your visit to our showroom is scheduled for ",date," in between 2pm to 6pm. \n Address - Joshi Electronics, 12 Lajpat Nagar, New Delhi \n Contact details : +91 7668395022")
+        else:
+            print('\t\t{}'.format(msg1.title()))
+            print("Congratulations Mr/Mrs",custnm1,". Your visit to our showroom is scheduled for ",date," in between 6pm to 10pm. \n Address - Joshi Electronics, 12 Lajpat Nagar, New Delhi \n Contact details : +91 7668395022")
+    elif chh11==2:
+        cstnmm=input("Please confirm your name or enter name of receiver :")
+        cstphn=input("Please confirm your phone number or give new one :")
+        cstadd=input("Please enter delivery address :")
+        print("Thank you. Please select the mode of payment by pressing : 1 for online \n 2 for COD \n 3 for cheque at time of delivery.")
+        chh45=int(input("Enter the desired mode of payment :"))
+        if chh45==1:
+            upi=int(input("Please enter your debit/credit card number :"))
+            cvv=int(input("Please enter the CVV :"))
+            print("To get One Time Password, click on 'Get OTP' button.")
+            subprocess.run(["python","otp.py","4"])
+            print("-"*50)
+            otp2=int(input("Enter the OTP generated above :"))
+            a=random.randrange(10,99)
+            captcha="NsLQ"+str(a)
+            print("Captcha code - ",captcha)
+            captcha1=input("Please enter the above case sensitive captcha code :")
+            if captcha1==captcha:
+                print("*"*50)
+                print("Congratulations. Your transaction is successful. \n You will receive the delivery of your ordered product within 36 hours. \n Thank you for using our services. Do visit again. \n @ Joshi electronics")
+            else:
+                print("*"*50)
+                print("Incorrect captcha code. Please try again")
+        elif chh45==2:
+            print("*"*50)
+            print("Congratulations. Your order has been placed. Please pay the amount by cash at the time of delivery. \n You will receive the delivery of your ordered product within 36 hours. \n Thank you for using our services. Do visit again. \n @ Joshi electronics")
+        elif chh45==3:
+            print("*"*50)
+            print("Congratulations. Your order has been placed. Please pay the amount by cheque at the time of delivery. \n You will receive the delivery of your ordered product within 36 hours. \n Thank you for using our services. Do visit again. \n @ Joshi electronics")
+from tkinter import *
+from tkinter import ttk
+def form1():
+    window=Tk()
+    window.title("Job Application Portal")
+    window.geometry('1000x600')
+    window.configure(background="light grey");
+    aa=Label(window ,text="First name",font=('Times',20)).grid(row=0,column=0)
+    bb=Label(window, text="Last name",font=('Times',20)).grid(row=1,column=0)
+    ee=Label(window, text="Gender",font=('Times',20)).grid(row=2,column=0)
+    gg=Label(window, text="DOB(YYYY/MM/DD)",font=('Times',20)).grid(row=3,column=0)
+    cc=Label(window, text="Email- Id ",font=('Times',20)).grid(row=4,column=0)
+    dd=Label(window, text="Contact no",font=('Times',20)).grid(row=5,column=0)
+    hh=Label(window, text="Work Experience (in months)",font=('Times',20)).grid(row=7,column=0)
+    ii=Label(window, text="Skills/Hobbies ",font=('Times',20)).grid(row=8,column=0)
+    jj=Label(window, text="Languages known",font=('Times',20)).grid(row=9,column=0)
+    kk=Label(window, text="Apply for post",font=('Times',20)).grid(row=10,column=0)
+    ff=Label(window, text="Qualification",font=('Times',20)).grid(row=11,column=0)
+    aa1=Entry(window,font=('Times',20)).grid(row=0,column=10)
+    bb1=Entry(window,font=('Times',20)).grid(row=1,column=10)
+    ee1=Entry(window,font=('Times',20)).grid(row=2,column=10)
+    gg1=Entry(window,font=('Times',20)).grid(row=3,column=10)
+    cc1=Entry(window,font=('Times',20)).grid(row=4,column=10)
+    dd1=Entry(window,font=('Times',20)).grid(row=5,column=10)
+    hh1=Entry(window,font=('Times',20)).grid(row=7,column=10)
+    ii1=Entry(window,font=('Times',20)).grid(row=8,column=10)
+    jj1=Entry(window,font=('Times',20)).grid(row=9,column=10)
+    kk1=Entry(window,font=('Times',20)).grid(row=10,column=10)
+    ff1=Entry(window,font=('Times',20)).grid(row=11,column=10)
+    def close():
+        window.after(2000,lambda:window.destroy())
+    btn=ttk.Button(window,text="SUBMIT",command=close).grid(row=20,column=2)
+    window.mainloop()
+def invoice():
+    no=int(input("Enter number of products purchases by customer :"))
+    total=0
+    for g in range(0,no):
+        productname=input("Enter the product category :")
+        model_id=input("Enter model id of the product :")
+        price=int(input("Enter product's selling price :"))
+        total=total+price
+    nmcst=input("Enter your customer's name :")
+    phone=input("Enter phone number of the customer :")
+    company_name=input("Enter your company name :")
+    company_address=input("Enter company office address :")
+    msg="INVOICE"
+    date=input("Enter date of purchase")
+    message="Thanks for shopping with us! Do visit again. \n For queries, contact us @ 260468"
+    print("-----------------------------------------------")
+    print("*" * 50)
+    print('\t\t{}'.format(company_name.title()))
+    print('\t\t{}'.format(company_address.title()))
+    print('\t\t{}'.format(msg.title()))
+    print("-" * 50)
+    print("Date of purchase :" '\t\t{}'.format(date.title()))
+    print("Customer's name :" '\t\t{}'.format(nmcst.title()))
+    print("Customer's contact :" '\t\t{}'.format(phone.title()))
+    print("-" * 50)
+    print('\t Product name \t Model ID \t Price')
+    for k in range(0,no):
+        print('\t{}\t{}\tRs{}'.format(productname.title(),model_id,price))
+    print("-"*50)
+    print('\t\t\t Total')
+    print('\t\t\tRs{}'.format(total))
+    print("-"*50)
+    print('\n\t{}\n'.format(message))
+    print("*"*50)
+def otp_generator():
+    import tkinter
+    import random
+    win=Tk()
+    win.title("OTP Generator")
+    win.geometry('50x50')
+    def otp():
+        otp1=random.randrange(1000,9999)
+        print("Your OTP is :",otp1)
+        win.after(10000,lambda:win.destroy())
+    btn1=ttk.Button(win,text="Get OTP",command=otp).grid(row=1,column=10)
+    win.mainloop()
+import pickle
+import subprocess
+import sys
+import mysql.connector as t
+import random
+db=t.connect(host="localhost", user="root", database="business_management", password="udayan02")
+x=db.cursor()
+msg2="WELCOME TO UDAYAN SOFTWARE LIMITED !!"
+print('\t\t{}'.format(msg2.title()))
+print("*"*80)
+print(" Press 1 for MERCHANT'S CORNER \n Press 2 for CUSTOMER'S CORNER \n Press 3 for SERVICE REQUEST \n Press 4 to go to SETTINGS \n Press 5 to fill your job application.")
+ch1=int(input("Select any one option :"))
+print("*" *75)
+#MERCHANT CORNER
+if ch1==1:
+    merchant_authorisation()
+    print("Press 1 to view the stock or inventory \n 2 to add a stock item in the inventory \n 3 to delete the stock item \n 4 to add details of the customer and the product sold \n 5 to view the sale history \n 6 to see the  sale of each category and calculate total revenue \n 7 to calculate the GST to be paid \n 8 to find the net profit and gross income \n 9 to print company's financial bill/record \n 10 to print bills for the customer")
+    print("---------------------------------------------------")
+    ch=int(input("Enter the number against which the work is to be done"))
+    print("---------------------------------------------------")
+    if ch==1:
+        print("Sno, Product category, Company, Model ID, Cost price, Sell price, Stock count")
+        x.execute("select * from inventory")
+        for k in x:
+            print(k)
+        print("**************************"*3)
+    elif ch==2:
+        print("ENTER DETAILS OF THE PRODUCT TO BE ADDED : ")
+        print("---------------------------------------------------")
+        sno=int(input("Enter serial number :"))
+        pc=input("Enter product category :")
+        c=input("Enter comapny name :")
+        mid=input("Enter model ID of the product :")
+        cp=int(input("Enter cost price :"))
+        sp=int(input("Enter selling price :"))
+        sc=int(input("Enter number of products/stock count :"))
+        rc=sno,pc,c,mid,cp,sp,sc
+        l=[]
+        l.extend(rc)
+        a="insert into inventory values(%s,%s,%s,%s,%s,%s,%s)"
+        x.execute(a,l)
+        db.commit()
+        print("-----------------------------------------")
+        print("Details of the product ADDED in the inventory")
+    elif ch==3:
+        z=input("Enter the model_id of the product which is out of stock")
+        import mysql.connector as t
+        db=t.connect(host="localhost", user="root", database="business_management", password="udayan02")
+        x=db.cursor()
+        query1="select stock_count from inventory where model_id=%s"
+        query2="update inventory set stock_count=%s where model_id=%s"
+        L=[]
+        L.append(z)
+        x.execute(query1,L)
+        for i in x:
+            stc=i
+        abc=int(stc[0])-1
+        L1=[abc,z]
+        x.execute(query2,L1)
+        db.commit()
+        x.execute(query1,L)
+        for j in x:
+            print("Remaining number of products after stock deleted is",j)
+    elif ch==4:
+        print("Details of the customer and product sold")
+        print("---------------------------------------------------")
+        sno2=int(input("Enter serial number :"))
+        pc2=input("Enter product category :")
+        mid2=input("Enter model ID of the product :")
+        sp2=int(input("Enter selling price :"))
+        dop=input("Enter date of purchase :")
+        cstnm=input("Enter customer name :")
+        cstno=int(input("Enter customer's contact number :"))
+        rc1=sno2,pc2,mid2,sp2,dop,cstnm,cstno
+        l3=[]
+        l3.extend(rc1)
+        a1="insert into monthly_sales values(%s,%s,%s,%s,%s,%s,%s)"
+        x.execute(a1,l3)
+        db.commit()
+        print("-----------------------------------------")
+        print("Details of the customer and sold product ADDED in the sales history")
+        print("-----------------------------------------")
+        choice3=int(input(" To prepare the bill/invoice for the customer, press 1 :"))
+        if choice3==1:
+            invoice()
+        else:
+            print()
+    elif ch==5:
+        print("The sales are as follows :")
+        print("-----------------------------------------")
+        print("Sno, Product_category, Model_ID, Date of purchase, Customer's name, Customer's contact")
+        x.execute("select*from monthly_sales")
+        for k in x:
+            print(k)
+        dictionary=[1,2,3,4,5,6,7,8,9,0]
+        for i in range(65,91):
+            dictionary.append(chr(i))
+        for j in range(97,123):
+            dictionary.append(chr(j))
+        slct=input("click any key to see MORE")
+        if slct in dictionary:
+            ch=input("Enter REVENUE if you want to see revenue of products category-wise :")
+            if ch=="REVENUE":
+                x.execute("select*from revenue")
+                for l in x:
+                    print(l)
+            else:
+                print("Wrong entry, Please return to the home page to view more.")
+    elif ch==6:
+        print("Total revenue from each category of product :")
+        print("-----------------------------------------")
+        x.execute("select*from revenue")
+        for l in x:
+            print(l)
+    elif ch==7:
+        print("Details of GST(Goods and Service Tax) for total sales in a month/year")
+        print("GST slabs - A.(5%) edibles, coal and fertilisers, medicines and drugs, Personal accessories, transport")
+        print("B.(12%) Processed/frozen food, dairy, packaged/loose items, utensils, study materials, machines")
+        print("C.(18%)Packages premium eatables, jute, metals, OFCs, Oil, shampoo and detergents, house utility products")
+        print("D.(28%) ACs, washing machines and other electrical appliances, premium products")
+        print("-----------------------------------------")
+        print("If your business belongs to any of the merchandise of A category, press 1 \n for B category, press 2 \n for C category, press 3 \n for D category, press 4")
+        print("If your merchandise is not stated, then select the option as per the percentage for GST.")
+        print("-----------------------------------------")
+        bzns=int(input("Select the option for GST slab :"))
+        #Calculation of GST by calling user-made function gstcalculator
+        def gstcalculator(supplycost,rate):
+            ds=supplycost*rate
+            value=ds//100
+            print("For the sale of products at cost price of Rs",supplycost,", the GST to be paid is Rs:",value)
+            print("The net price or GST inclusive price for the total sales is",supcost+value)
+            print("-----------------------------------------")
+        #main section
+        x.execute(" select sum(cost_price) supply_cost from inventory I,monthly_sales M where I.model_id=M.model_id")
+        for v in x:
+            supply_cost=v
+            supcost=int(supply_cost[0])
+        if bzns==1:
+            rate=5
+        elif bzns==2:
+            rate=12
+        elif bzns==3:
+            rate=18
+        elif bzns==4:
+            rate=28
+        else:
+            print("Wrong GST slab chosen. Retry.")
+        gstcalculator(supcost,rate)
+    elif ch==8:
+        x.execute("select sum(revenue) from revenue")
+        for d in x:
+            gross=int(d[0])
+        print("Do you already know the GST amount or you wish to calculate? \n Enter K if you know or 7 to calculate")
+        ans=input("Enter your choice :")
+        if ans=="K":
+            value1=int(input("Enter GST amount :"))
+            gstamt=value1
+            print("-----------------------------------------")
+            print("Details of the gross income and net profit")
+            print("-----------------------------------------")
+            print("Your total sales amounts to Rs.",gross)
+            print("Your GST amount equals to Rs.",gstamt)
+            profit=gross-gstamt
+            print("-----------------------------------------")
+            print("Your net profit after paying all taxes amounts to Rs.",profit)
+        else:
+            x.execute(" select sum(cost_price) supply_cost from inventory I,monthly_sales M where I.model_id=M.model_id")
+            for u in x:
+                supply_cost1=u
+                supcost1=int(supply_cost1[0])
+                rate2=int(input("Enter GST rate slab - 5/12/18/28"))
+            def gstcalculator(supplycost,rate):
+                ds=supplycost*rate
+                value=ds//100
+                print("-----------------------------------------")
+                print("Details of the gross income and net profit")
+                print("-----------------------------------------")
+                print("Your total sales amounts to Rs.",gross)
+                print("Your GST amount equals to Rs.",value)
+                profit=gross-value
+                print("-----------------------------------------")
+                print("Your net profit after paying all taxes amounts to Rs.",profit)
+            #main
+            gstcalculator(supcost1,rate2)
+    elif ch==9:
+        messagee="Income refers to the money left with the \n company/organisation after paying the taxes and \n other expenditure. \n Thank you for using our service."
+        print("To calculate financial data, enter the below details :")
+        grossinc=int(input("Enter your total sales income :"))
+        gstamt2=int(input("Enter the amount of taxes paid :"))
+        expenditure=int(input("Enter details of other business expenditure, i.e., transport, electricity, salary, maintenance etc. :"))
+        profit2=grossinc-gstamt2
+        proftfinale=profit2-expenditure
+        if proftfinale<0:
+            loss=input("Enter loss amount :")
+        else:
+            loss="NULL"
+        total2=grossinc
+        totalinc=proftfinale
+        print()
+        print("*"*50)
+        heading="FINANCIAL INFORMATION"
+        print('\t\t{}'.format(heading.title()))
+        print("-" * 50)
+        print("GROSS INCOME :" '\t\t\tRs.{}'.format(str(grossinc).title()))
+        print("GST/TAXES PAID :" '\t\tRs.{}'.format(str(gstamt2).title()))
+        print("MISCELLANEOUS EXPENDITURE :" '\tRs.{}'.format(str(expenditure).title()))
+        print("-" * 50)
+        print(' TOTAL REVENUE \t \t INCOME(left with company)')
+        print('Rs.{}\t\tRs.{}'.format(total2,totalinc))
+        print("-"*50)
+        print('\n\t{}\n'.format(messagee))
+        print("*" *50)        
+    elif ch==10:
+        invoice()
+#CUSTOMER CORNER
+elif ch1==2:
+    print("WELCOME TO CUSTOMER'S CORNER! \n -----------------------------------------")
+    print("If you are new, press 1 to register. \n For existing customers, to login, press 2")
+    chh7=int(input("Select the type of user :"))
+    print("-"*50)
+    if chh7==1:
+        rgst="CUSTOMER REGISTRATION. \n (Please fill form in block letters)"
+        print('\t\t{}'.format(rgst.title()))
+        custnm=input("Enter your name :")
+        custph=input("Enter your contact number :")
+        yob=input("Enter your year of birth :")
+        frst=custnm[0:3]
+        scnd=custph[0:10:3]
+        thrd=yob[2:4]
+        custid=frst+scnd+thrd
+        tbl=custid,custnm,custph
+        tbl1=[]
+        tbl1.extend(tbl)
+        queryy1="insert into customers values(%s,%s,%s)"
+        x.execute(queryy1,tbl1)
+        db.commit()
+        print("-----------------------------------------")
+        print("Your system generated customer ID is", custid, ". Please keep it for future reference.")
+        print("-----------------------------------------")
+        custshop()
+        shoppee2()
+    elif chh7==2:
+        custshop()
+        shoppee2()
+#SERVICE REQUEST PAGE
+elif ch1==3:
+    print("-"*50)
+    urs="Welcome to the SERVICE REQUEST page."
+    print('\t\t{}'.format(urs.title()))
+    print("-"*50)
+    print("For feedback or suggestions, press 1 \n For grievances, press 2 \n For customer care, press 3")
+    chi=int(input("Select the option :"))
+    print("*"*80)
+    if chi==1:
+        mssg=" UDAYAN SOFTWARE LTD. VALUES ITS CUSTOMERS. PLEASE FEEL FREE TO GIVE YOUR VALUABLE FEEDBACK AND SUGGESTIONS AND HELP US IMPROVE. TOGETHER, WE CAN!"
+        print('\t\t{}'.format(mssg.title()))
+        print("-"*80)
+        fdc1=input("Please enter your name : ")
+        fdc2=input("Please enter your contact number : ")
+        fdc3=input("Please write briefly your feedback and suggestions and press enter to submit. \n")
+        ch23=input("Are you sure to submit? Enter YES or NO  :")
+        fdclistprep=fdc1,fdc2,fdc3
+        fdclist=[]
+        fdclist.extend(fdclistprep)
+        if ch23=="YES":
+            submitquery="insert into feedback values(%s,%s,%s)"
+            x.execute(submitquery,fdclist)
+            db.commit()
+            print("*"*80)
+            print("Feedback submitted. Thankyou for writing to us.")
+        else:
+            print("*"*80)
+            print("Some error occured while submitting the feedback. Please try again.")
+    elif chi==2:
+        mssg1="WELCOME TO THE GRIEVANCE PORTAL OF UDAYAN SOFTWARE LIMITED"
+        print("*"*50)
+        print('\t\t{}'.format(mssg1.title()))
+        print("To register your grievance, press 1 \n To see the status of your grievance, press 2 \n For grievance redressal(only for organisation), press 3")
+        ch24=int(input("Select the option :"))
+        if ch24==1:
+            print("-"*75)
+            nm24=input("Please enter your name :")
+            email=input("Please enter your email ID :")
+            gr1=input("Please enter grievance type/subject in 1-5 word(s) :")
+            frst1=nm24[0:4]
+            scnd1=email[4:15:3]
+            grid="2024/0100/"+frst1+scnd1
+            print("-"*75)
+            gr=input("Please describe briefly your grievance :")
+            que24="insert into grievance(name,email,grievance_no,grievance_type) values(%s,%s,%s,%s)"
+            grlst=[nm24,email,grid,gr1]
+            x.execute(que24,grlst)
+            db.commit()
+            print("-"*75)
+            ch25=input("Are you sure to submit? Enter YES or NO  :")
+            if ch25=="YES":
+                print("*"*80)
+                print("Grievance submitted. Thankyou for writing to us. \n Your grievance number is",grid,". Please keep it for future reference.")
+            else:
+                print("*"*80)
+                print("Some error occured while submitting the grievance. Please try again.")
+        elif ch24==2:
+            lst25=[]
+            print("-"*75)
+            grid2=input("Please enter your grievance number :")
+            x.execute("select grievance_no from grievance")
+            lists7=x.fetchall()
+            lists8=[list(row) for row in lists7]
+            grid2n=[grid2]
+            if grid2n in lists8:
+                que25="select status from grievance where grievance_no=%s"
+                lst25.append(grid2)
+                x.execute(que25,lst25)
+                for r in x:
+                    print("Your grievance is :",''.join(r))
+            else:
+                print("Invalid Grievance Number.")
+        elif ch24==3:
+            print("-"*75)
+            print("**only for organisation")
+            grid3=input("Enter the grievance number :")
+            x.execute("select grievance_no from grievance")
+            lists9=x.fetchall()
+            lists9i=[list(row) for row in lists9]
+            grid3n=[grid3]
+            grid3new=tuple(grid3n)
+            if grid3n in lists9i:
+                ques="select*from grievance where grievance_no=%s"
+                x.execute(ques,grid3new)
+                answer=x.fetchone()
+                print("\n Details as submitted by the complainant with entered grievance ID - ") 
+                print("Complainant Name \t Email \t\t Grievance_No \t\t Grievance_Type \t Status")
+                print(answer, "\n\n")
+                gstatus=input("If greivance is cleared, type REDRESSED , else type PENDING.")
+                lst26=[gstatus,grid3]
+                quer26="update grievance set status=%s where grievance_no=%s"
+                x.execute(quer26,lst26)
+                db.commit()
+                print("Thankyou for using our services. The status of the grievance is registered.")
+            else:
+                print("No grievance registered with the entered number.") 
+    elif chi==3:
+        print("-"*75)
+        print('\t\t{}'.format("WELCOME TO THE CUSTOMER CARE PORTAL".title()))
+        print("-"*75)
+        print("For support through Whatsapp or call, please message/call our toll free numbers : 18004254999 or 30304499")
+        print("-"*75)
+        chiii=int(input("To request for home assistance, please press 1 "))
+        nm45=input("Please enter your name :")
+        c45=int(input("Please enter your contact number :"))
+        ad45=input("Please enter your address :")
+        dd45=input("Please enter date of home service in DD-MM-YYYY format :")
+        print("-"*75)
+        print("Your request for home service is registered with us. Our support partner will reach your place at the scheduled time to assist you. \n Thankyou for using our online services.")
+#SETTINGS PAGE
+elif ch1==4:
+    urs1="SETTINGS"
+    print('\t\t{}'.format(urs1.title()))
+    print("*"*70)
+    print(" 1. Terms and Conditions \n 2. Privacy Policy \n 3. About Us \n 4. Logout")
+    choi5=int(input("Enter option number :"))
+    print("-"*70)
+    if choi5==1:
+        m1="TERMS AND CONDITIONS"
+        print("*"*70)
+        print('\t\t{}'.format(m1.title()))
+        print('''Use of the Services provided by the Company through its Website shall be conditional on agreeing to observe the following Terms of Use. Use of the Services provided by the Company shall entail your agreement to be bound by these Terms of Use. \n The Company does not offer any warranty as to the accuracy, content, completeness, legality, reliability or operability or availability of information or material made available to and/or by Users. . \n Under no circumstances shall the Company be held liable in damages of any kind whatsoever to any User. The Company shall not be responsible for any content displayed on the Website or any content which is linked to the Website. \n All rights, including copyright, in the content of the Website are owned or controlled for these purposes by the Company. Users may only download the content for your own personal non-commercial use. \n ''')
+    elif choi5==2:
+        m2="PRIVACY POLICY"
+        print('\t\t{}'.format(m2.title()))
+        print("*"*70)
+        print('''UDAYAN collects data to provide you with direct feedback in respect of our services. You provide some of this data directly, such as when you fill in the Contact us form, comment on our articles. We get some data using technologies like cookies, and receiving error reports or usage data from software running on your device. \n
+We also obtain data from third parties. We protect data obtained from third parties according to the practices described in this statement. When you are asked to provide personal data, you may decline. But if you choose not to provide data that is necessary to deliver a service or a feature or give feedback, you may not be able to use this service. We will share your information with our Development Center, which will handle your request. Our Development Center must abide by our data privacy and security requirements and is not allowed to use personal data. To ensure an adequate level of protection of personal data you share, all obligations of the Development Center are established in an agreement.\n We use cookies to provide our online services and to help collect data.We use a variety of security technologies and procedures to help protect your personal data from unauthorized access, use or disclosure. ''')
+    elif choi5==3:
+        m3=int(input(" Select 1 to know ABOUT UDAYAN SOFTWARE LIMITED \n Select 2 to know ABOUT THE COMPANY/BUSINESS"))
+        if m3==1:
+            print("-"*70)
+            m4="ABOUT UDAYAN SOFTWARE LIMITED"
+            print('\t\t{}'.format(m4.title()))
+            print(" We are a software developing company, based in Mathura, India. We at present are working on our school project and trying to build a business management software.")
+        elif m3==2:
+            print("-"*70)
+            m5="ABOUT COMPANY/BUSINESS"
+            print('\t\t{}'.format(m5.title()))
+            print(" Welcome to the world of Electronics. Use our online services for viewing and purchasing the products. We are the best in town electronics shops in both offline and online mode. \n HAPPY SHOPPING AND DO VISIT US AGAIN.")
+    elif choi5==4:
+        print("LOGOUT OF YOUR ACCOUNT")
+        print("_"*70)
+        idcm=input("Enter your login ID and press enter to logout :")
+        m6=input("Are you sure to logout? YES or NO :")
+        print("_"*70)
+        if m6=="YES":
+              m7="Successfully logged out. Please close this page."
+              print('\t\t{}'.format(m7.title()))
+        else:
+            print("Some internal error occured. Try again.")
+#JOB PORTAL
+elif ch1==5:
+    print('\t\t{}'.format("WELCOME TO THE 'APPLY FOR JOB' PORTAL"))
+    print("Where do you wish to apply? \n 1.Udayan Softwares \n 2. Client-Business/Merchant")
+    cho34=int(input("Select the option :"))
+    print("_"*75)
+    strt=input("Enter START to begin your application :")
+    if strt=="START":
+        subprocess.run(["python","form1.py","4"])
+    else:
+        print("Wrong option entered")
+    print("*"*80)
+    print("\t\t This is the JOB PORTAL of UDAYAN SOFTWARE LTD.")
+    print("-"*80)
+    print("CONGRATULATIONS! Your job application is submitted successfully. \n Please track your mail for future correspondence.\n Thank you.")
+ 
